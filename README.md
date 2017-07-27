@@ -1,5 +1,7 @@
 # @delucis/reading-data
 
+[![Build Status](https://travis-ci.org/delucis/reading-data.svg?branch=master)](https://travis-ci.org/delucis/reading-data)
+
 Aggregate data from different sources.
 
 
