@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/delucis/reading-data/issues"
   },
-  "homepage": "https://github.com/delucis/reading-data#readme"
+  "homepage": "https://github.com/delucis/reading-data#readme",
+  "dependencies": {
+    "instapaper": "git+https://github.com/dusty/node-instapaper.git",
+    "winston": "^2.3.1"
+  }
 }
