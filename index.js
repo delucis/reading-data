@@ -122,6 +122,7 @@ const ReadingData = (function () {
     /**
      * Contains the reading data currently available.
      * @type {Object}
+     * @since 0.0.1
      */
     data: {},
 
@@ -131,12 +132,15 @@ const ReadingData = (function () {
      * @prop {Object}  plugins={}     - Holds configuration for installed plugins.
      * @prop {Boolean} preload=false  - Enables/disables preloading of data.
      * @prop {Object}  preloadData={} - Holds data to be preloaded.
+     *
+     * @since 0.0.1
      */
     config: config,
 
     /**
      * Array containing the currently installed plugins.
      * @type {Array}
+     * @since 0.0.1
      */
     plugins: plugins,
 
@@ -170,6 +174,7 @@ const ReadingData = (function () {
      *
      * console.log(RD.data) // => { preloadData: [ ... ] }
      *
+     * @since 0.0.1
      */
     clean: function (scope) {
       if (!scope) {
@@ -211,6 +216,8 @@ const ReadingData = (function () {
      *
      * // Trigger ReadingData’s run() cycle, which will call all installed plugins.
      * RD.run()
+     *
+     * @since 0.0.1
      */
     use: function (plugin, opts) {
       if (typeof plugin !== 'object') {
@@ -262,6 +269,8 @@ const ReadingData = (function () {
      *
      * // Remove a specific plugin.
      * RD.uninstall(plugin1)
+     *
+     * @since 0.0.1
      */
     uninstall: function (plugin) {
       if (!plugin) {
@@ -299,6 +308,8 @@ const ReadingData = (function () {
      * RD.preloadData(false)
      * // Equivalent to:
      * // RD.config.preload = false
+     *
+     * @since 0.0.1
      */
     preloadData: function (arg) {
       if (typeof arg === 'object') {
@@ -342,6 +353,7 @@ const ReadingData = (function () {
      *
      * asynchronousDataLogger()
      *
+     * @since 0.0.1
      */
     run: async function () {
       preload(this)
