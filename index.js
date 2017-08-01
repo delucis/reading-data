@@ -121,6 +121,7 @@ const ReadingData = (function () {
     // PUBLIC VARIABLES
     /**
      * Contains the reading data currently available.
+     *
      * @type {Object}
      * @since 0.0.1
      */
@@ -128,6 +129,7 @@ const ReadingData = (function () {
 
     /**
      * Configuration settings for use during [.run()]{@link module:reading-data~run}.
+     *
      * @type {Object}
      * @prop {Object}  plugins={}     - Holds configuration for installed plugins.
      * @prop {Boolean} preload=false  - Enables/disables preloading of data.
@@ -139,6 +141,7 @@ const ReadingData = (function () {
 
     /**
      * Array containing the currently installed plugins.
+     *
      * @type {Array}
      * @since 0.0.1
      */
