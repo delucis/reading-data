@@ -1,6 +1,6 @@
 {
   "name": "@delucis/reading-data",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Aggregate a user’s reading data from different sources.",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "nyc mocha --reporter spec",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "preversion": "npm run test",
-    "version": "npmr run clean:docs && npm run build:docs && git add -A docs",
+    "version": "npm run clean:docs && npm run build:docs && git add -A docs",
     "postversion": "git push --follow-tags"
   },
   "repository": {
