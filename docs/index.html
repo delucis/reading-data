@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Home - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-reading-data.html">reading-data</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~clean">clean</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~preloadData">preloadData</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~run">run</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~uninstall">uninstall</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~use">use</a></span></li>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><h1>@delucis/reading-data</h1><p><a href="https://travis-ci.org/delucis/reading-data"><img src="https://travis-ci.org/delucis/reading-data.svg?branch=master" alt="Build Status"></a>
+<a href="https://coveralls.io/github/delucis/reading-data?branch=master"><img src="https://coveralls.io/repos/github/delucis/reading-data/badge.svg?branch=master" alt="Coverage Status"></a></p>
+<p>Aggregate data from different sources.</p>
+<h2>Installation</h2><pre class="prettyprint source lang-sh"><code>npm install --save @delucis/reading-data</code></pre><h2>Usage</h2><h3>Introduction</h3><p><code>@delucis/reading-data</code> provides an interface for gathering data from
+third-party APIs such as <a href="https://www.instapaper.com/">Instapaper</a>.</p>
+<p>On its own, this module doesn’t do much but provides a framework for plugins
+to add support for individual services via its <code>.use()</code> method.</p>
+<p>An arbitrary number of plugins can be included and then run in parallel using
+the <code>.run()</code> method.</p>
+<pre class="prettyprint source lang-js"><code>const READING_DATA = require('@delucis/reading-data')
+const INSTAPAPER_PLUGIN = require('@delucis/reading-data-instapaper')
+
+READING_DATA.use(INSTAPAPER_PLUGIN, {
+  // plugin settings
+})
+
+READING_DATA.run()</code></pre><h3>Handling Asynchronous Responses</h3><p>Often, plugins can take some time to fetch data. For example, they might be
+sending a request over the network or loading a file from disk. <code>reading-data</code>
+makes it easy to wait for this data to arrive and then use it.</p>
+<p>This can be achieved either by using <code>.then()</code> Promise syntax…</p>
+<pre class="prettyprint source lang-js"><code>READING_DATA.run().then((result) => {
+  console.log(result.data) // prints the gathered data to the console
+})</code></pre><p>…or by writing your own asynchronous functions.</p>
+<pre class="prettyprint source lang-js"><code>myAsyncDataLogger = async function () {
+  await READING_DATA.run()
+  console.log(READING_DATA.data)
+}
+
+myAsyncDataLogger()  // prints the gathered data to the console</code></pre><h3>Preloading Data</h3><p>You may have existing data that should be expanded upon or used during the
+<code>.run()</code> cycle. If so, you can pass it to a <code>reading-data</code> instance using the
+<code>.preloadData()</code> method.</p>
+<pre class="prettyprint source lang-js"><code>const READING_DATA = require('@delucis/reading-data')
+const EXISTING_DATA = require('./some-data-i-saved-earlier.json')
+
+READING_DATA.preloadData(EXISTING_DATA)</code></pre><p>This is equivalent to setting the configuration as follows:</p>
+<pre class="prettyprint source lang-js"><code>READING_DATA.config.preloadData = EXISTING_DATA
+READING_DATA.config.preload = true</code></pre></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a> on Mon Aug 07 2017 00:09:07 GMT+0100 (BST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
