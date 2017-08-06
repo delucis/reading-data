@@ -27,7 +27,8 @@
     "jsdoc": "^3.5.3",
     "minami": "^1.2.3",
     "mocha": "^3.4.2",
-    "nyc": "^11.0.3"
+    "nyc": "^11.0.3",
+    "rimraf": "^2.6.1"
   },
   "dependencies": {
     "instapaper": "git+https://github.com/dusty/node-instapaper.git",
