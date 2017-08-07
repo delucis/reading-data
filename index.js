@@ -24,6 +24,17 @@ const ReadingData = (function () {
   }
 
   /**
+   * Array holding the hooks called during [.run()]{@link module:reading-data~run}.
+   *
+   * @memberof module:reading-data
+   * @private
+   * @type {String[]}
+   *
+   * @since 0.2.0
+   */
+  let hooks = ['preload', 'fetch', 'process']
+
+  /**
    * Array holding the currently installed plugins.
    *
    * @memberof module:reading-data
@@ -63,59 +74,46 @@ const ReadingData = (function () {
   }
 
   /**
-   * Call plugins’ `.fetch()` properties and add the returned value to
-   * [.data]{@link module:reading-data~data}.
+   * Call plugins’ methods, and add their returned values to
+   * [.data]{@link module:reading-data~data} under the plugin’s scope.
    *
    * @memberof module:reading-data
    * @private
+   * @param  {String} hook    Name of the hook to try to call on each plugin.
    * @param  {Object} context Contextual this passed from {@link module:reading-data~run}
    * @return {Object}         context.data after all plugins have returned their data.
+   *
+   * @since 0.2.0
    */
-  let fetch = async function (context) {
-    log.debug('Fetching data...')
+  let callHook = async function (hook, context) {
     await Promise.all(plugins.map(async plugin => {
-      if (plugin.hasOwnProperty('fetch')) {
+      if (plugin.hasOwnProperty(hook) && typeof plugin[hook] === 'function') {
         let pluginConfig = context.config.plugins[plugin.__id__]
         let pluginContext = {
           config: pluginConfig,
           data: context.data[pluginConfig.scope]
         }
-        let pluginData
-        if (typeof plugin.fetch === 'function') {
-          pluginData = await plugin.fetch(pluginContext, context)
-        } else if (typeof plugin.fetch === 'object') {
-          pluginData = plugin.fetch
-        }
-        if (pluginData) {
-          context.data[pluginContext.config.scope] = pluginData
-        }
+        let pluginData = await plugin[hook](pluginContext, context)
+        context.data[pluginContext.config.scope] = pluginData
       }
     }))
     return context.data
   }
 
   /**
-   * Call plugins’ `.process()` properties and add the returned values to
-   * [.data]{@link module:reading-data~data}.
+   * Cycle through `.hooks`, calling each hook in order.
    *
    * @memberof module:reading-data
    * @private
    * @param  {Object} context Contextual this passed from {@link module:reading-data~run}
-   * @return {Object}         context.data after all plugins have returned their data.
+   * @return {Object}         `context.data` after all plugins have returned their data.
+   *
+   * @since 0.2.0
    */
-  let process = async function (context) {
-    log.debug('Processing data...')
-    await Promise.all(plugins.map(async plugin => {
-      if (plugin.hasOwnProperty('process') && typeof plugin.process === 'function') {
-        let pluginConfig = context.config.plugins[plugin.__id__]
-        let pluginContext = {
-          config: pluginConfig,
-          data: context.data[pluginConfig.scope]
-        }
-        let processedData = await plugin.process(pluginContext, context)
-        context.data[pluginContext.config.scope] = processedData
-      }
-    }))
+  let callHooks = async function (context) {
+    for (let hook of hooks) {
+      await callHook(hook, context)
+    }
     return context.data
   }
 
@@ -362,8 +360,7 @@ const ReadingData = (function () {
      */
     run: async function () {
       preload(this)
-      await fetch(this)
-      await process(this)
+      await callHooks(this)
       return this
     }
   }
