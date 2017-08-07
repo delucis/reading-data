@@ -79,9 +79,50 @@ const EXISTING_DATA = require('./some-data-i-saved-earlier.json')
 READING_DATA.preloadData(EXISTING_DATA)
 ```
 
-This is equivalent to setting the configuration as follows:
+The `.preloadData()` method can also enable or disable data preloading if passed
+a boolean:
 
 ```js
-READING_DATA.config.preloadData = EXISTING_DATA
-READING_DATA.config.preload = true
+READING_DATA.preloadData(false) // disables preloading
+```
+
+#### Preloading data tries to be non-destructive
+
+When the `.run()` method is called, preloaded data will be added
+key-by-key to `.data` using `Object.assign`. This means it is safe to use
+`.preloadData()` on a `reading-data` instance that is already holding some data
+as long as you are scoping your data properly.
+
+```js
+READING_DATA.use(myPlugin, { scope: 'myPluginScope' })
+READING_DATA.run() // adds some data to READING_DATA.data.myPluginScope
+READING_DATA.uninstall(myPlugin) // removes the plugin that added data
+
+READING_DATA.preloadData({ myPreloadScope: { /* ... */ }})
+READING_DATA.run()
+// READING_DATA.data now contains:
+// {
+//   myPluginScope: { /* ... */ },
+//   myPreloadScope: { /* ... */ }
+// }
+```
+
+#### Preloading data only happens once
+
+Data preloading only happens the first time the `.run()` method is called after
+using `.preloadData()`. This prevents the same data being loaded twice and
+avoids overwriting a scope that may have been updated with newer data by a
+plugin.
+
+In general this is probably the desired behaviour in a flow that moves from
+preloading data, to fetching data, to processing data. If you need to re-load
+data that you had previously preloaded, simply pass `true` to `.preloadData()`.
+
+```js
+let dataToLoad = { myPreloadScope: { text: 'I pre-exist.' } }
+READING_DATA.preloadData(dataToLoad)
+READING_DATA.run() // adds dataToLoad to READING_DATA.data
+READING_DATA.run() // doesn’t try to reload dataToLoad
+READING_DATA.preloadData(true)
+READING_DATA.run() // adds dataToLoad to READING_DATA.data
 ```
