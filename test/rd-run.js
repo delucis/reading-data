@@ -65,22 +65,6 @@ DESCRIBE('ReadingData#run()', function () {
     EXPECT(READING_DATA.data[pluginScope]).to.equal(testValue)
   })
 
-  IT('should add a plugin’s fetch property to data if it’s an object', function () {
-    let pluginScope = 'fetchObjTester'
-    let testValue = { data: 'some data returned immediately as an object' }
-    let testPlugin = {
-      fetch: testValue,
-      config: {
-        scope: pluginScope
-      }
-    }
-    READING_DATA.use(testPlugin)
-    EXPECT(READING_DATA.data).not.to.have.property(pluginScope)
-    READING_DATA.run()
-    EXPECT(READING_DATA.data).to.have.property(pluginScope)
-    EXPECT(READING_DATA.data[pluginScope]).to.equal(testValue)
-  })
-
   IT('should do nothing if a plugin’s fetch property is a string', function () {
     let pluginScope = 'fetchStringTester'
     let testPlugin = {
@@ -156,8 +140,8 @@ DESCRIBE('ReadingData#run()', function () {
       config: {
         scope: testScope
       },
-      fetch: {
-        valToSquare: testValue
+      fetch: function () {
+        return { valToSquare: testValue }
       },
       process: function ({config}, {data}) {
         return new Promise(function (resolve, reject) {
