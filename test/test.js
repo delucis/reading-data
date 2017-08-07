@@ -167,6 +167,15 @@ DESCRIBE('ReadingData#run()', function () {
     EXPECT(READING_DATA.data).to.be.empty
   })
 
+  IT('should set ReadingData#config.preload to false after preloading', function () {
+    let dummyData = { data: 'this data should be loaded' }
+    READING_DATA.clean()
+    READING_DATA.preloadData(dummyData)
+    EXPECT(READING_DATA.config.preload).to.be.true
+    READING_DATA.run()
+    EXPECT(READING_DATA.config.preload).to.be.false
+  })
+
   IT('should call a plugin’s fetch method', async function () {
     let pluginScope = 'fetchTester'
     let testValue = 'This data has been added successfully!'
