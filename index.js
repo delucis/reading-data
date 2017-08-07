@@ -196,6 +196,16 @@ const ReadingData = (function () {
     },
 
     /**
+     * Get an array of currently registered hooks.
+     * @return {String[]} An array of registered hook names.
+     *
+     * @since 0.2.0
+     */
+    hooks: function () {
+      return hooks
+    },
+
+    /**
      * Tell [ReadingData]{@link module:reading-data} to use a plugin.
      *
      * Adds the provided `plugin` to [.plugins]{@link module:reading-data~plugins}
