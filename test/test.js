@@ -150,12 +150,12 @@ DESCRIBE('ReadingData#run()', function () {
   })
 
   IT('should preload data if ReadingData#config.preload is true', function () {
-    let dummyData = { data: 'this data should not be loaded' }
+    let dummyData = { data: 'this data should be loaded' }
     READING_DATA.clean()
     READING_DATA.preloadData(dummyData)
     EXPECT(READING_DATA.data).to.be.empty
     READING_DATA.run()
-    EXPECT(READING_DATA.data).to.equal(dummyData)
+    EXPECT(READING_DATA.data).to.include(dummyData)
   })
 
   IT('should not preload data if ReadingData#config.preload is false', function () {
