@@ -59,6 +59,7 @@ const ReadingData = (function () {
     }
     log.debug('Preloading data...')
     Object.assign(context.data, config.preloadData)
+    config.preload = false
   }
 
   /**
