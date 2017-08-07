@@ -54,10 +54,11 @@ const ReadingData = (function () {
    * @param {Object} context
    */
   let preload = function (context) {
-    if (config.preload) {
-      log.debug('Preloading data...')
-      context.data = config.preloadData
+    if (!config.preload) {
+      return
     }
+    log.debug('Preloading data...')
+    Object.assign(context.data, config.preloadData)
   }
 
   /**
