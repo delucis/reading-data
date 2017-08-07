@@ -149,6 +149,71 @@ const ReadingData = (function () {
 
     // PUBLIC FUNCTIONS
     /**
+     * Adds a hook to be called during ReadingData’s
+     * [.run()]{@link module:reading-data~run} cycle.
+     *
+     * @param  {String} hook          The name of the new hook to register.
+     * @param  {String} [preposition] Either `'before'` or `'after'`.
+     * @param  {String} [location]    The name of the existing hook to register the new hook before or after.
+     * @return {Object} Returns [ReadingData]{@link module:reading-data} to allow for method chaining.
+     *
+     * @example <caption>Add a new hook after all existing hooks.</caption>
+     * const RD = require('@delucis/reading-data')
+     * RD.addHook('postProcess')
+     *
+     * @example <caption>Add a new hook before all existing hooks.</caption>
+     * const RD = require('@delucis/reading-data')
+     * RD.addHook('init', 'before')
+     *
+     * @example <caption>Add a “preProcess” hook before the existing “process” hook.</caption>
+     * const RD = require('@delucis/reading-data')
+     * RD.addHook('preProcess', 'before', 'process')
+     *
+     * @since 0.2.0
+     */
+    addHook: function (hook, preposition, location) {
+      if (typeof hook !== 'string') {
+        throw new Error('ReadingData#addHook(): first argument must be a string, was ' + typeof hook + '.')
+      }
+      if (hooks.indexOf(hook) >= 0) {
+        log.debug('ReadingData#addHook(): "' + hook + '" is already registered.')
+        return this
+      }
+      if (typeof preposition === 'undefined') {
+        hooks.push(hook)
+        return this
+      }
+      if (typeof preposition !== 'string') {
+        throw new Error('ReadingData#addHook(): second argument must be a string, was ' + typeof preposition + '.')
+      }
+      if (preposition !== 'after' && preposition !== 'before') {
+        throw new Error('ReadingData#addHook(): second argument must be either "after" or "before", was "' + preposition + '".')
+      }
+      if (typeof location === 'undefined') {
+        if (preposition === 'before') {
+          hooks.unshift(hook)
+          return this
+        } else { // preposition === 'after'
+          hooks.push(hook)
+          return this
+        }
+      }
+      if (typeof location !== 'string') {
+        throw new Error('ReadingData#addHook(): third argument must be a string, was ' + typeof location + '.')
+      }
+      let locationIndex = hooks.indexOf(location)
+      if (locationIndex < 0) {
+        throw new Error('ReadingData#addHook(): third argument must be the name of an existing hook.')
+      }
+      if (preposition === 'before') {
+        hooks.splice(locationIndex, 0, hook)
+      } else { // preposition === 'after'
+        hooks.splice(locationIndex + 1, 0, hook)
+      }
+      return this
+    },
+
+    /**
      * Clean up [.data]{@link module:reading-data~data}, wiping parts or all of it.
      *
      * @param  {String} [scope] The scope to be cleaned.
