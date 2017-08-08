@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/delucis/reading-data.svg?branch=master)](https://travis-ci.org/delucis/reading-data)
 [![Coverage Status](https://coveralls.io/repos/github/delucis/reading-data/badge.svg?branch=master)](https://coveralls.io/github/delucis/reading-data?branch=master)
+[![npm (scoped)](https://img.shields.io/npm/v/@delucis/reading-data.svg)](https://www.npmjs.com/package/@delucis/reading-data)
 
 Aggregate data from different sources.
 
