@@ -32,7 +32,6 @@
     "rimraf": "^2.6.1"
   },
   "dependencies": {
-    "instapaper": "git+https://github.com/dusty/node-instapaper.git",
     "winston": "^2.3.1"
   }
 }
