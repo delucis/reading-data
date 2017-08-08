@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-reading-data.html">reading-data</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~clean">clean</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~preloadData">preloadData</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~run">run</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~uninstall">uninstall</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~use">use</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-reading-data.html">reading-data</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~addHook">addHook</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~clean">clean</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~hooks">hooks</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~preloadData">preloadData</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~run">run</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~uninstall">uninstall</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~use">use</a></span></li>
 </nav>
 
 <div id="main">
@@ -63,6 +63,17 @@ const ReadingData = (function () {
     preload: false,
     preloadData: {}
   }
+
+  /**
+   * Array holding the hooks called during [.run()]{@link module:reading-data~run}.
+   *
+   * @memberof module:reading-data
+   * @private
+   * @type {String[]}
+   *
+   * @since 0.2.0
+   */
+  let hooks = ['preload', 'fetch', 'process']
 
   /**
    * Array holding the currently installed plugins.
@@ -104,59 +115,46 @@ const ReadingData = (function () {
   }
 
   /**
-   * Call plugins’ `.fetch()` properties and add the returned value to
-   * [.data]{@link module:reading-data~data}.
+   * Call plugins’ methods, and add their returned values to
+   * [.data]{@link module:reading-data~data} under the plugin’s scope.
    *
    * @memberof module:reading-data
    * @private
+   * @param  {String} hook    Name of the hook to try to call on each plugin.
    * @param  {Object} context Contextual this passed from {@link module:reading-data~run}
    * @return {Object}         context.data after all plugins have returned their data.
+   *
+   * @since 0.2.0
    */
-  let fetch = async function (context) {
-    log.debug('Fetching data...')
+  let callHook = async function (hook, context) {
     await Promise.all(plugins.map(async plugin => {
-      if (plugin.hasOwnProperty('fetch')) {
+      if (plugin.hasOwnProperty(hook) &amp;&amp; typeof plugin[hook] === 'function') {
         let pluginConfig = context.config.plugins[plugin.__id__]
         let pluginContext = {
           config: pluginConfig,
           data: context.data[pluginConfig.scope]
         }
-        let pluginData
-        if (typeof plugin.fetch === 'function') {
-          pluginData = await plugin.fetch(pluginContext, context)
-        } else if (typeof plugin.fetch === 'object') {
-          pluginData = plugin.fetch
-        }
-        if (pluginData) {
-          context.data[pluginContext.config.scope] = pluginData
-        }
+        let pluginData = await plugin[hook](pluginContext, context)
+        context.data[pluginContext.config.scope] = pluginData
       }
     }))
     return context.data
   }
 
   /**
-   * Call plugins’ `.process()` properties and add the returned values to
-   * [.data]{@link module:reading-data~data}.
+   * Cycle through `.hooks`, calling each hook in order.
    *
    * @memberof module:reading-data
    * @private
    * @param  {Object} context Contextual this passed from {@link module:reading-data~run}
-   * @return {Object}         context.data after all plugins have returned their data.
+   * @return {Object}         `context.data` after all plugins have returned their data.
+   *
+   * @since 0.2.0
    */
-  let process = async function (context) {
-    log.debug('Processing data...')
-    await Promise.all(plugins.map(async plugin => {
-      if (plugin.hasOwnProperty('process') &amp;&amp; typeof plugin.process === 'function') {
-        let pluginConfig = context.config.plugins[plugin.__id__]
-        let pluginContext = {
-          config: pluginConfig,
-          data: context.data[pluginConfig.scope]
-        }
-        let processedData = await plugin.process(pluginContext, context)
-        context.data[pluginContext.config.scope] = processedData
-      }
-    }))
+  let callHooks = async function (context) {
+    for (let hook of hooks) {
+      await callHook(hook, context)
+    }
     return context.data
   }
 
@@ -191,6 +189,71 @@ const ReadingData = (function () {
     plugins: plugins,
 
     // PUBLIC FUNCTIONS
+    /**
+     * Adds a hook to be called during ReadingData’s
+     * [.run()]{@link module:reading-data~run} cycle.
+     *
+     * @param  {String} hook          The name of the new hook to register.
+     * @param  {String} [preposition] Either `'before'` or `'after'`.
+     * @param  {String} [location]    The name of the existing hook to register the new hook before or after.
+     * @return {Object} Returns [ReadingData]{@link module:reading-data} to allow for method chaining.
+     *
+     * @example &lt;caption>Add a new hook after all existing hooks.&lt;/caption>
+     * const RD = require('@delucis/reading-data')
+     * RD.addHook('postProcess')
+     *
+     * @example &lt;caption>Add a new hook before all existing hooks.&lt;/caption>
+     * const RD = require('@delucis/reading-data')
+     * RD.addHook('init', 'before')
+     *
+     * @example &lt;caption>Add a “preProcess” hook before the existing “process” hook.&lt;/caption>
+     * const RD = require('@delucis/reading-data')
+     * RD.addHook('preProcess', 'before', 'process')
+     *
+     * @since 0.2.0
+     */
+    addHook: function (hook, preposition, location) {
+      if (typeof hook !== 'string') {
+        throw new Error('ReadingData#addHook(): first argument must be a string, was ' + typeof hook + '.')
+      }
+      if (hooks.indexOf(hook) >= 0) {
+        log.debug('ReadingData#addHook(): "' + hook + '" is already registered.')
+        return this
+      }
+      if (typeof preposition === 'undefined') {
+        hooks.push(hook)
+        return this
+      }
+      if (typeof preposition !== 'string') {
+        throw new Error('ReadingData#addHook(): second argument must be a string, was ' + typeof preposition + '.')
+      }
+      if (preposition !== 'after' &amp;&amp; preposition !== 'before') {
+        throw new Error('ReadingData#addHook(): second argument must be either "after" or "before", was "' + preposition + '".')
+      }
+      if (typeof location === 'undefined') {
+        if (preposition === 'before') {
+          hooks.unshift(hook)
+          return this
+        } else { // preposition === 'after'
+          hooks.push(hook)
+          return this
+        }
+      }
+      if (typeof location !== 'string') {
+        throw new Error('ReadingData#addHook(): third argument must be a string, was ' + typeof location + '.')
+      }
+      let locationIndex = hooks.indexOf(location)
+      if (locationIndex &lt; 0) {
+        throw new Error('ReadingData#addHook(): third argument must be the name of an existing hook.')
+      }
+      if (preposition === 'before') {
+        hooks.splice(locationIndex, 0, hook)
+      } else { // preposition === 'after'
+        hooks.splice(locationIndex + 1, 0, hook)
+      }
+      return this
+    },
+
     /**
      * Clean up [.data]{@link module:reading-data~data}, wiping parts or all of it.
      *
@@ -236,6 +299,16 @@ const ReadingData = (function () {
       }
       log.debug('ReadingData#clean(): passed scope not found in data; nothing cleaned.')
       return this
+    },
+
+    /**
+     * Get an array of currently registered hooks.
+     * @return {String[]} An array of registered hook names.
+     *
+     * @since 0.2.0
+     */
+    hooks: function () {
+      return hooks
     },
 
     /**
@@ -403,8 +476,7 @@ const ReadingData = (function () {
      */
     run: async function () {
       preload(this)
-      await fetch(this)
-      await process(this)
+      await callHooks(this)
       return this
     }
   }
@@ -423,7 +495,7 @@ module.exports = ReadingData
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a> on Mon Aug 07 2017 14:09:49 GMT+0100 (BST) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a> on Tue Aug 08 2017 02:04:04 GMT+0200 (CEST) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
