@@ -93,6 +93,28 @@ DESCRIBE('ReadingData#run()', function () {
     EXPECT(READING_DATA.data).to.equal(preRunData)
   })
 
+  IT('should call a plugin’s fetch method for every scope if config.scope is an array', async function () {
+    let pluginScope = ['multiScope', 'manyScope', 'muchScope']
+    let testValue = 'This data has been added successfully!'
+    let testPlugin = {
+      fetch: function () {
+        return testValue
+      },
+      config: {
+        scope: pluginScope
+      }
+    }
+    READING_DATA.use(testPlugin)
+    for (let scope of pluginScope) {
+      EXPECT(READING_DATA.data).not.to.have.property(scope)
+    }
+    await READING_DATA.run()
+    for (let scope of pluginScope) {
+      EXPECT(READING_DATA.data).to.have.property(scope)
+      EXPECT(READING_DATA.data[scope]).to.equal(testValue)
+    }
+  })
+
   IT('should call a plugin’s process method', async function () {
     let pluginScope = 'processTester'
     let testValue = 500
