@@ -89,12 +89,16 @@ const ReadingData = (function () {
     await Promise.all(plugins.map(async plugin => {
       if (plugin.hasOwnProperty(hook) && typeof plugin[hook] === 'function') {
         let pluginConfig = context.config.plugins[plugin.__id__]
-        let pluginContext = {
-          config: pluginConfig,
-          data: context.data[pluginConfig.scope]
-        }
-        let pluginData = await plugin[hook](pluginContext, context)
-        context.data[pluginContext.config.scope] = pluginData
+        let pluginScopes = Array.isArray(pluginConfig.scope) ? pluginConfig.scope : Array.of(pluginConfig.scope)
+        await Promise.all(pluginScopes.map(async scope => {
+          let pluginContext = {
+            config: pluginConfig,
+            data: context.data[scope],
+            scope: scope
+          }
+          let pluginData = await plugin[hook](pluginContext, context)
+          context.data[scope] = pluginData
+        }))
       }
     }))
     return context.data
