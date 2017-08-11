@@ -1,6 +1,6 @@
 {
   "name": "@delucis/reading-data",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Aggregate a user’s reading data from different sources.",
   "main": "index.js",
   "scripts": {
