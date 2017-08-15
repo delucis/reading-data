@@ -74,6 +74,36 @@ const ReadingData = (function () {
   }
 
   /**
+   * Test whether or not a plugin should be called for a given hook and scope.
+   *
+   * @memberof module:reading-data
+   * @private
+   * @param  {String} hook         The hook currenty being called.
+   * @param  {Object} pluginConfig The configuration object for this plugin.
+   * @param  {String} scope        The scope for which the plugin is currently being called.
+   * @return {Boolean}             `true` if that plugin should be called for `hook` & `scope`.
+   *
+   * @since 0.4.0
+   */
+  let shouldCall = function (hook, pluginConfig, scope) {
+    if (!pluginConfig.hasOwnProperty('hooks')) {
+      return hook === 'fetch'
+    }
+    if (typeof pluginConfig.hooks === 'string') {
+      return hook === pluginConfig.hooks
+    }
+    if (typeof pluginConfig.hooks === 'object') {
+      if (pluginConfig.hooks.hasOwnProperty(scope)) {
+        return hook === pluginConfig.hooks[scope]
+      }
+      if (pluginConfig.hooks.hasOwnProperty('default')) {
+        return hook === pluginConfig.hooks.default
+      }
+    }
+    return false
+  }
+
+  /**
    * Call plugins’ methods, and add their returned values to
    * [.data]{@link module:reading-data~data} under the plugin’s scope.
    *
