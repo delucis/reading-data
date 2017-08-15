@@ -117,19 +117,19 @@ const ReadingData = (function () {
    */
   let callHook = async function (hook, context) {
     await Promise.all(plugins.map(async plugin => {
-      if (plugin.hasOwnProperty(hook) && typeof plugin[hook] === 'function') {
-        let pluginConfig = context.config.plugins[plugin.__id__]
-        let pluginScopes = Array.isArray(pluginConfig.scope) ? pluginConfig.scope : Array.of(pluginConfig.scope)
-        await Promise.all(pluginScopes.map(async scope => {
+      let pluginConfig = context.config.plugins[plugin.__id__]
+      let pluginScopes = Array.isArray(pluginConfig.scope) ? pluginConfig.scope : Array.of(pluginConfig.scope)
+      await Promise.all(pluginScopes.map(async scope => {
+        if (shouldCall(hook, pluginConfig, scope)) {
           let pluginContext = {
             config: pluginConfig,
             data: context.data[scope],
             scope: scope
           }
-          let pluginData = await plugin[hook](pluginContext, context)
+          let pluginData = await plugin.data(pluginContext, context)
           context.data[scope] = pluginData
-        }))
-      }
+        }
+      }))
     }))
     return context.data
   }
