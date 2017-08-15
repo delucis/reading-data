@@ -24,10 +24,14 @@ third-party APIs such as [Instapaper][1b1ac993].
   [1b1ac993]: https://www.instapaper.com/
 
 On its own, this module doesn’t do much but provides a framework for plugins
-to add support for individual services via its `.use()` method.
+to add support for individual services via its [`.use()` method][331f159c].
+
+  [331f159c]: https://delucis.github.io/reading-data/module-reading-data.html#~use ".use() in the reading-data documentation"
 
 An arbitrary number of plugins can be included and then run in parallel using
-the `.run()` method.
+the [`.run()` method][81e02dd2].
+
+  [81e02dd2]: https://delucis.github.io/reading-data/module-reading-data.html#~run ".run() in the reading-data documentation"
 
 ```js
 const READING_DATA = require('@delucis/reading-data')
