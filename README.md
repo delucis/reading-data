@@ -67,6 +67,28 @@ myAsyncDataLogger()  // prints the gathered data to the console
 ```
 
 
+### Hooks during `.run()`
+
+When you call `.run()` on a `reading-data` instance, by default it will cycle
+through three hooks — `preload`, `fetch`, and `process` — calling each plugin
+that is configured for that hook. Additional hooks can be registered using the
+[`.addHook()` method][37d6ce9e].
+
+  [37d6ce9e]: https://delucis.github.io/reading-data/module-reading-data.html#~addHook ".addHook() in the reading-data documentation"
+
+If a plugin does not set a default hook to run on, it will be called during the
+`fetch` hook.
+
+This can be configured by setting a `hooks` option for that plugin.
+
+```js
+// call myPlugin.data() during the preload hook
+READING_DATA.use(myPlugin, {
+  hooks: 'preload'
+})
+```
+
+
 ### Preloading Data
 
 You may have existing data that should be expanded upon or used during the
