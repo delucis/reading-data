@@ -47,11 +47,11 @@ DESCRIBE('ReadingData#run()', function () {
     EXPECT(READING_DATA.config.preload).to.be.false
   })
 
-  IT('should call a plugin’s fetch method', async function () {
+  IT('should call a plugin’s data method', async function () {
     let pluginScope = 'fetchTester'
     let testValue = 'This data has been added successfully!'
     let testPlugin = {
-      fetch: function () {
+      data: function () {
         return testValue
       },
       config: {
@@ -65,39 +65,11 @@ DESCRIBE('ReadingData#run()', function () {
     EXPECT(READING_DATA.data[pluginScope]).to.equal(testValue)
   })
 
-  IT('should do nothing if a plugin’s fetch property is a string', function () {
-    let pluginScope = 'fetchStringTester'
-    let testPlugin = {
-      fetch: 'fetch shouldn’t be a string, so this should be ignored',
-      config: {
-        scope: pluginScope
-      }
-    }
-    READING_DATA.use(testPlugin)
-    let preRunData = READING_DATA.data
-    READING_DATA.run()
-    EXPECT(READING_DATA.data).to.equal(preRunData)
-  })
-
-  IT('should do nothing if a plugin doesn’t have a fetch property', function () {
-    let pluginScope = 'noFetchTester'
-    let testPlugin = {
-      fudge: 'definitely not a fetch function',
-      config: {
-        scope: pluginScope
-      }
-    }
-    READING_DATA.use(testPlugin)
-    let preRunData = READING_DATA.data
-    READING_DATA.run()
-    EXPECT(READING_DATA.data).to.equal(preRunData)
-  })
-
-  IT('should call a plugin’s fetch method for every scope if config.scope is an array', async function () {
+  IT('should call a plugin’s data method for every scope if config.scope is an array', async function () {
     let pluginScope = ['multiScope', 'manyScope', 'muchScope']
     let testValue = 'This data has been added successfully!'
     let testPlugin = {
-      fetch: function () {
+      data: function () {
         return testValue
       },
       config: {
@@ -115,25 +87,106 @@ DESCRIBE('ReadingData#run()', function () {
     }
   })
 
-  IT('should call a plugin’s process method', async function () {
+  IT('should call a plugin’s data method via the process hook', async function () {
     let pluginScope = 'processTester'
     let testValue = 500
     let testMultiplier = 2
-    let testPlugin = {
-      fetch: function () {
+    let fetchPlugin = {
+      data: function () {
         return testValue
-      },
-      process: function ({config}, {data}) {
-        return data[config.scope] * testMultiplier
       },
       config: {
         scope: pluginScope
       }
     }
-    READING_DATA.use(testPlugin)
+    let processPlugin = {
+      data: function ({config}, {data}) {
+        return data[config.scope] * testMultiplier
+      },
+      config: {
+        scope: pluginScope,
+        hooks: 'process'
+      }
+    }
+    READING_DATA.use(fetchPlugin)
+    READING_DATA.use(processPlugin)
     await READING_DATA.run()
     EXPECT(READING_DATA.data).to.have.property(pluginScope)
     EXPECT(READING_DATA.data[pluginScope]).to.equal(testValue * testMultiplier)
+  })
+
+  IT('should call a plugin’s data method if config.hooks is an object', async function () {
+    let pluginScope = 'hooksObjectTester'
+    let testValue = 'This data has been added successfully!'
+    let testPlugin = {
+      data: function () {
+        return testValue
+      },
+      config: {
+        scope: pluginScope,
+        hooks: { [pluginScope]: 'fetch' }
+      }
+    }
+    READING_DATA.use(testPlugin)
+    EXPECT(READING_DATA.data).not.to.have.property(pluginScope)
+    await READING_DATA.run()
+    EXPECT(READING_DATA.data).to.have.property(pluginScope)
+    EXPECT(READING_DATA.data[pluginScope]).to.equal(testValue)
+  })
+
+  IT('should call a plugin’s data method if config.hooks sets a default value', async function () {
+    let pluginScope = 'hooksDefaultTester'
+    let testValue = 'This data has been added successfully!'
+    let testPlugin = {
+      data: function () {
+        return testValue
+      },
+      config: {
+        scope: pluginScope,
+        hooks: { default: 'fetch' }
+      }
+    }
+    READING_DATA.use(testPlugin)
+    EXPECT(READING_DATA.data).not.to.have.property(pluginScope)
+    await READING_DATA.run()
+    EXPECT(READING_DATA.data).to.have.property(pluginScope)
+    EXPECT(READING_DATA.data[pluginScope]).to.equal(testValue)
+  })
+
+  IT('should not call a plugin’s data method if config.hooks doesn’t include its scope', async function () {
+    let pluginScope = 'hooksMissingTester'
+    let testValue = 'This data has been added successfully!'
+    let testPlugin = {
+      data: function () {
+        return testValue
+      },
+      config: {
+        scope: pluginScope,
+        hooks: { otherScope: 'fetch' }
+      }
+    }
+    READING_DATA.use(testPlugin)
+    EXPECT(READING_DATA.data).not.to.have.property(pluginScope)
+    await READING_DATA.run()
+    EXPECT(READING_DATA.data).not.to.have.property(pluginScope)
+  })
+
+  IT('should not call a plugin’s data method if config.hooks is invalid (is a number)', async function () {
+    let pluginScope = 'hooksMissingTester'
+    let testValue = 'This data has been added successfully!'
+    let testPlugin = {
+      data: function () {
+        return testValue
+      },
+      config: {
+        scope: pluginScope,
+        hooks: 5
+      }
+    }
+    READING_DATA.use(testPlugin)
+    EXPECT(READING_DATA.data).not.to.have.property(pluginScope)
+    await READING_DATA.run()
+    EXPECT(READING_DATA.data).not.to.have.property(pluginScope)
   })
 
   IT('should work with an asynchronous fetch plugin (50ms timeout)', async function () {
@@ -142,7 +195,7 @@ DESCRIBE('ReadingData#run()', function () {
       config: {
         scope: testScope
       },
-      fetch: function () {
+      data: function () {
         return new Promise(function (resolve, reject) {
           setTimeout(function () {
             resolve('some async data')
@@ -158,14 +211,20 @@ DESCRIBE('ReadingData#run()', function () {
   IT('should work with an asynchronous process plugin (75ms timeout)', async function () {
     let testScope = 'asyncProcessTestPlugin'
     let testValue = 12
-    let testPlugin = {
+    let fetchPlugin = {
       config: {
         scope: testScope
       },
-      fetch: function () {
+      data: function () {
         return { valToSquare: testValue }
+      }
+    }
+    let processPlugin = {
+      config: {
+        scope: testScope,
+        hooks: 'process'
       },
-      process: function ({config}, {data}) {
+      data: function ({config}, {data}) {
         return new Promise(function (resolve, reject) {
           setTimeout(function () {
             let d = data[config.scope]
@@ -175,7 +234,8 @@ DESCRIBE('ReadingData#run()', function () {
         })
       }
     }
-    READING_DATA.use(testPlugin)
+    READING_DATA.use(fetchPlugin)
+    READING_DATA.use(processPlugin)
     await READING_DATA.run()
     EXPECT(READING_DATA.data).to.have.property(testScope)
     EXPECT(READING_DATA.data[testScope].valToSquare).to.equal(testValue * testValue)
@@ -187,7 +247,7 @@ DESCRIBE('ReadingData#run()', function () {
       config: {
         scope: testScope
       },
-      fetch: function () {
+      data: function () {
         return new Promise(function (resolve, reject) {
           setTimeout(function () {
             resolve('some async data')
