@@ -1,6 +1,7 @@
 /**
  * @module reading-data
  * @requires winston
+ * @requires lodash.clonedeep
  */
 
 const log = require('winston')
