@@ -4,6 +4,7 @@
  */
 
 const log = require('winston')
+const CLONE = require('lodash.cloneDeep')
 
 const ReadingData = (function () {
   // PRIVATE VARIABLES
@@ -342,9 +343,9 @@ const ReadingData = (function () {
         return this
       }
       let id = generatePluginID()
-      let pluginConfig = Object.assign((plugin.config || {}), (opts || {}))
+      let defaultConfig = CLONE((plugin.config || {}))
+      let pluginConfig = Object.assign(defaultConfig, (opts || {}))
       config.plugins[id] = pluginConfig
-      plugin.config = config.plugins[id]
       plugin.__id__ = id
       plugins.push(plugin)
       return this
