@@ -119,7 +119,7 @@ const ReadingData = (function () {
    */
   let callHook = async function (hook, context) {
     await Promise.all(plugins.map(async plugin => {
-      let pluginConfig = context.config.plugins[plugin.__id__]
+      let pluginConfig = config.plugins[plugin.__id__]
       let pluginScopes = Array.isArray(pluginConfig.scope) ? pluginConfig.scope : Array.of(pluginConfig.scope)
       await Promise.all(pluginScopes.map(async scope => {
         if (shouldCall(hook, pluginConfig, scope)) {
