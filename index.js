@@ -4,7 +4,7 @@
  */
 
 const log = require('winston')
-const CLONE = require('lodash.cloneDeep')
+const CLONE = require('lodash.clonedeep')
 
 const ReadingData = (function () {
   // PRIVATE VARIABLES
