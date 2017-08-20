@@ -164,16 +164,14 @@ const ReadingData = (function () {
     data: {},
 
     /**
-     * Configuration settings for use during [.run()]{@link module:reading-data~run}.
+     * Get the current configuration.
+     * @return {Object} An object containing the current configuration.
      *
-     * @type {Object}
-     * @prop {Object}  plugins={}     - Holds configuration for installed plugins.
-     * @prop {Boolean} preload=false  - Enables/disables preloading of data.
-     * @prop {Object}  preloadData={} - Holds data to be preloaded.
-     *
-     * @since 0.0.1
+     * @since 0.6.0
      */
-    config: config,
+    config: function () {
+      return config
+    },
 
     /**
      * Get an array of the currently installed plugins.
