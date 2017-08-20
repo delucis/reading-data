@@ -23,10 +23,10 @@ DESCRIBE('ReadingData#uninstall()', function () {
     READING_DATA.use(testPlugin1)
                .use(testPlugin2)
                .use(testPlugin3)
-    EXPECT(READING_DATA.plugins).to.have.lengthOf(3)
+    EXPECT(READING_DATA.plugins()).to.have.lengthOf(3)
     EXPECT(READING_DATA.config.plugins).to.not.be.empty
     READING_DATA.uninstall()
-    EXPECT(READING_DATA.plugins).to.have.lengthOf(0)
+    EXPECT(READING_DATA.plugins()).to.have.lengthOf(0)
     EXPECT(READING_DATA.config.plugins).to.be.empty
   })
 
@@ -37,16 +37,16 @@ DESCRIBE('ReadingData#uninstall()', function () {
     READING_DATA.use(testPlugin1)
                .use(testPlugin2)
                .use(testPlugin3)
-    EXPECT(READING_DATA.plugins).to.have.lengthOf(3)
+    EXPECT(READING_DATA.plugins()).to.have.lengthOf(3)
     EXPECT(READING_DATA.config.plugins).to.not.be.empty
     READING_DATA.uninstall(testPlugin1)
-    EXPECT(READING_DATA.plugins).to.have.lengthOf(2)
+    EXPECT(READING_DATA.plugins()).to.have.lengthOf(2)
     EXPECT(READING_DATA.config.plugins).to.not.be.empty
     READING_DATA.uninstall(testPlugin2)
-    EXPECT(READING_DATA.plugins).to.have.lengthOf(1)
+    EXPECT(READING_DATA.plugins()).to.have.lengthOf(1)
     EXPECT(READING_DATA.config.plugins).to.not.be.empty
     READING_DATA.uninstall(testPlugin3)
-    EXPECT(READING_DATA.plugins).to.have.lengthOf(0)
+    EXPECT(READING_DATA.plugins()).to.have.lengthOf(0)
     EXPECT(READING_DATA.config.plugins).to.be.empty
   })
 

@@ -16,38 +16,38 @@ DESCRIBE('ReadingData#use()', function () {
     EXPECT(READING_DATA.use).to.be.a('function')
   })
 
-  IT('should add a plugin to ReadingData#plugins', function () {
+  IT('should add a plugin to ReadingData#plugins()', function () {
     let testPlugin = { usingAPlugin: 'should add it to the plugins member' }
-    let currentPluginCount = READING_DATA.plugins.length
+    let currentPluginCount = READING_DATA.plugins().length
     READING_DATA.use(testPlugin)
-    EXPECT(READING_DATA.plugins).to.have.lengthOf(currentPluginCount + 1)
+    EXPECT(READING_DATA.plugins()).to.have.lengthOf(currentPluginCount + 1)
   })
 
   IT('should add a unique ID to the installed plugin', function () {
     let testPlugin = { usingAPlugin: 'should assign it a unique ID' }
     READING_DATA.use(testPlugin)
-    let indexOfNewPlugin = READING_DATA.plugins.length - 1
-    let newPlugin = READING_DATA.plugins[indexOfNewPlugin]
+    let indexOfNewPlugin = READING_DATA.plugins().length - 1
+    let newPlugin = READING_DATA.plugins()[indexOfNewPlugin]
     EXPECT(newPlugin).to.have.property('__id__')
     EXPECT(newPlugin.__id__).to.be.a('number')
   })
 
-  IT('should add a second argument to the installed plugin’s config property', function () {
+  IT('should add a second argument to the installed plugin’s configuration', function () {
     let testPlugin = { usingAPlugin: 'should accept a second options argument' }
     let testOpts = { testPluginConfig: 'should be welcome' }
     READING_DATA.use(testPlugin, testOpts)
-    let indexOfNewPlugin = READING_DATA.plugins.length - 1
-    let newPlugin = READING_DATA.plugins[indexOfNewPlugin]
-    EXPECT(newPlugin).to.have.property('config')
-    EXPECT(newPlugin.config).to.include(testOpts)
+    let indexOfNewPlugin = READING_DATA.plugins().length - 1
+    let newPluginID = READING_DATA.plugins()[indexOfNewPlugin].__id__
+    let newPluginConfig = READING_DATA.config.plugins[newPluginID]
+    EXPECT(newPluginConfig).to.include(testOpts)
   })
 
   IT('should create an entry in ReadingData#config.plugins', function () {
     let testPlugin = { usingAPlugin: 'should add a config entry' }
     let testOpts = { testPluginConfig: 'should be added to global config' }
     READING_DATA.use(testPlugin, testOpts)
-    let indexOfNewPlugin = READING_DATA.plugins.length - 1
-    let newPlugin = READING_DATA.plugins[indexOfNewPlugin]
+    let indexOfNewPlugin = READING_DATA.plugins().length - 1
+    let newPlugin = READING_DATA.plugins()[indexOfNewPlugin]
     EXPECT(READING_DATA.config.plugins).to.have.property(newPlugin.__id__)
     EXPECT(READING_DATA.config.plugins[newPlugin.__id__]).to.include(testOpts)
   })
@@ -55,9 +55,9 @@ DESCRIBE('ReadingData#use()', function () {
   IT('should only install a plugin once', function () {
     let testPlugin = { usingAPlugin: 'should only be possible once' }
     READING_DATA.use(testPlugin)
-    let pluginCount = READING_DATA.plugins.length
+    let pluginCount = READING_DATA.plugins().length
     READING_DATA.use(testPlugin)
-    EXPECT(READING_DATA.plugins.length).to.equal(pluginCount)
+    EXPECT(READING_DATA.plugins().length).to.equal(pluginCount)
   })
 
   IT('shouldn’t install a plugin that is a string', function () {

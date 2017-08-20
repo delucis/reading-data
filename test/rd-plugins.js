@@ -11,12 +11,16 @@ BEFORE_EACH(function () {
   READING_DATA.uninstall()
 })
 
-DESCRIBE('ReadingData#plugins', function () {
+DESCRIBE('ReadingData#plugins()', function () {
   IT('should exist', function () {
     EXPECT(READING_DATA).to.have.property('plugins')
   })
 
-  IT('should be an array', function () {
-    EXPECT(READING_DATA.plugins).to.be.an('array')
+  IT('should be a function', function () {
+    EXPECT(READING_DATA.plugins).to.be.a('function')
+  })
+
+  IT('should return an array', function () {
+    EXPECT(READING_DATA.plugins()).to.be.an('array')
   })
 })

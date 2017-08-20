@@ -174,12 +174,14 @@ const ReadingData = (function () {
     config: config,
 
     /**
-     * Array containing the currently installed plugins.
+     * Get an array of the currently installed plugins.
+     * @return {Object[]} An array of the currently installed plugins.
      *
-     * @type {Array}
-     * @since 0.0.1
+     * @since 0.5.0
      */
-    plugins: plugins,
+    plugins: function () {
+      return plugins
+    },
 
     // PUBLIC FUNCTIONS
     /**
