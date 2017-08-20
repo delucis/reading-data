@@ -42,9 +42,9 @@ DESCRIBE('ReadingData#run()', function () {
     let dummyData = { data: 'this data should be loaded' }
     READING_DATA.clean()
     READING_DATA.preloadData(dummyData)
-    EXPECT(READING_DATA.config.preload).to.be.true
+    EXPECT(READING_DATA.config().preload).to.be.true
     READING_DATA.run()
-    EXPECT(READING_DATA.config.preload).to.be.false
+    EXPECT(READING_DATA.config().preload).to.be.false
   })
 
   IT('should call a plugin’s data method', async function () {

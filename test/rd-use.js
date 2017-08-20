@@ -38,7 +38,7 @@ DESCRIBE('ReadingData#use()', function () {
     READING_DATA.use(testPlugin, testOpts)
     let indexOfNewPlugin = READING_DATA.plugins().length - 1
     let newPluginID = READING_DATA.plugins()[indexOfNewPlugin].__id__
-    let newPluginConfig = READING_DATA.config.plugins[newPluginID]
+    let newPluginConfig = READING_DATA.config().plugins[newPluginID]
     EXPECT(newPluginConfig).to.include(testOpts)
   })
 
@@ -52,14 +52,14 @@ DESCRIBE('ReadingData#use()', function () {
     READING_DATA.use(testPlugin, { param: firstTimeParam })
     let indexOfNewPlugin = READING_DATA.plugins().length - 1
     let firstTimePluginID = READING_DATA.plugins()[indexOfNewPlugin].__id__
-    let firstTimePluginConfig = READING_DATA.config.plugins[firstTimePluginID]
+    let firstTimePluginConfig = READING_DATA.config().plugins[firstTimePluginID]
     EXPECT(firstTimePluginConfig).to.have.property('param')
     EXPECT(firstTimePluginConfig.param).to.equal(firstTimeParam)
     READING_DATA.uninstall()
     READING_DATA.use(testPlugin)
     indexOfNewPlugin = READING_DATA.plugins().length - 1
     let secondTimePluginID = READING_DATA.plugins()[indexOfNewPlugin].__id__
-    let secondTimePluginConfig = READING_DATA.config.plugins[secondTimePluginID]
+    let secondTimePluginConfig = READING_DATA.config().plugins[secondTimePluginID]
     EXPECT(secondTimePluginConfig).to.have.property('param')
     EXPECT(secondTimePluginConfig.param).to.equal(defaultParam)
   })
@@ -70,8 +70,8 @@ DESCRIBE('ReadingData#use()', function () {
     READING_DATA.use(testPlugin, testOpts)
     let indexOfNewPlugin = READING_DATA.plugins().length - 1
     let newPlugin = READING_DATA.plugins()[indexOfNewPlugin]
-    EXPECT(READING_DATA.config.plugins).to.have.property(newPlugin.__id__)
-    EXPECT(READING_DATA.config.plugins[newPlugin.__id__]).to.include(testOpts)
+    EXPECT(READING_DATA.config().plugins).to.have.property(newPlugin.__id__)
+    EXPECT(READING_DATA.config().plugins[newPlugin.__id__]).to.include(testOpts)
   })
 
   IT('should only install a plugin once', function () {

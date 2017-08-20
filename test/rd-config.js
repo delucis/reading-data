@@ -16,7 +16,11 @@ DESCRIBE('ReadingData#config', function () {
     EXPECT(READING_DATA).to.have.property('config')
   })
 
-  IT('should be an object', function () {
-    EXPECT(READING_DATA.config).to.be.an('object')
+  IT('should be a function', function () {
+    EXPECT(READING_DATA.config).to.be.a('function')
+  })
+
+  IT('should return an object', function () {
+    EXPECT(READING_DATA.config()).to.be.an('object')
   })
 })

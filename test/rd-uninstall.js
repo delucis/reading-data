@@ -24,10 +24,10 @@ DESCRIBE('ReadingData#uninstall()', function () {
                .use(testPlugin2)
                .use(testPlugin3)
     EXPECT(READING_DATA.plugins()).to.have.lengthOf(3)
-    EXPECT(READING_DATA.config.plugins).to.not.be.empty
+    EXPECT(READING_DATA.config().plugins).to.not.be.empty
     READING_DATA.uninstall()
     EXPECT(READING_DATA.plugins()).to.have.lengthOf(0)
-    EXPECT(READING_DATA.config.plugins).to.be.empty
+    EXPECT(READING_DATA.config().plugins).to.be.empty
   })
 
   IT('should remove a specific plugin', function () {
@@ -38,16 +38,16 @@ DESCRIBE('ReadingData#uninstall()', function () {
                .use(testPlugin2)
                .use(testPlugin3)
     EXPECT(READING_DATA.plugins()).to.have.lengthOf(3)
-    EXPECT(READING_DATA.config.plugins).to.not.be.empty
+    EXPECT(READING_DATA.config().plugins).to.not.be.empty
     READING_DATA.uninstall(testPlugin1)
     EXPECT(READING_DATA.plugins()).to.have.lengthOf(2)
-    EXPECT(READING_DATA.config.plugins).to.not.be.empty
+    EXPECT(READING_DATA.config().plugins).to.not.be.empty
     READING_DATA.uninstall(testPlugin2)
     EXPECT(READING_DATA.plugins()).to.have.lengthOf(1)
-    EXPECT(READING_DATA.config.plugins).to.not.be.empty
+    EXPECT(READING_DATA.config().plugins).to.not.be.empty
     READING_DATA.uninstall(testPlugin3)
     EXPECT(READING_DATA.plugins()).to.have.lengthOf(0)
-    EXPECT(READING_DATA.config.plugins).to.be.empty
+    EXPECT(READING_DATA.config().plugins).to.be.empty
   })
 
   IT('should throw an error if the plugin isn’t installed', function () {
