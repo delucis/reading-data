@@ -42,6 +42,28 @@ DESCRIBE('ReadingData#use()', function () {
     EXPECT(newPluginConfig).to.include(testOpts)
   })
 
+  IT('should not reproduce second argument configuration when reusing a plugin', function () {
+    let defaultParam = 'foo'
+    let testPlugin = {
+      reusingAPlugin: 'should not use configuration of first use',
+      config: { param: defaultParam }
+    }
+    let firstTimeParam = 'bar'
+    READING_DATA.use(testPlugin, { param: firstTimeParam })
+    let indexOfNewPlugin = READING_DATA.plugins().length - 1
+    let firstTimePluginID = READING_DATA.plugins()[indexOfNewPlugin].__id__
+    let firstTimePluginConfig = READING_DATA.config.plugins[firstTimePluginID]
+    EXPECT(firstTimePluginConfig).to.have.property('param')
+    EXPECT(firstTimePluginConfig.param).to.equal(firstTimeParam)
+    READING_DATA.uninstall()
+    READING_DATA.use(testPlugin)
+    indexOfNewPlugin = READING_DATA.plugins().length - 1
+    let secondTimePluginID = READING_DATA.plugins()[indexOfNewPlugin].__id__
+    let secondTimePluginConfig = READING_DATA.config.plugins[secondTimePluginID]
+    EXPECT(secondTimePluginConfig).to.have.property('param')
+    EXPECT(secondTimePluginConfig.param).to.equal(defaultParam)
+  })
+
   IT('should create an entry in ReadingData#config.plugins', function () {
     let testPlugin = { usingAPlugin: 'should add a config entry' }
     let testOpts = { testPluginConfig: 'should be added to global config' }
