@@ -6,6 +6,7 @@
 
 const log = require('winston')
 const CLONE = require('lodash.clonedeep')
+const JP = require('jsonpath')
 
 const ReadingData = (function () {
   // PRIVATE VARIABLES
@@ -139,11 +140,21 @@ const ReadingData = (function () {
         if (shouldCall(hook, pluginConfig, scope)) {
           let pluginContext = {
             config: pluginConfig,
-            data: context.data[scope],
             scope: scope
           }
-          let pluginData = await plugin.data(pluginContext, context)
-          context.data[scope] = pluginData
+          if (isJSONPath(scope)) {
+            let paths = JP.paths(context.data, scope)
+            paths.map(async path => {
+              let pathString = JP.stringify(path)
+              pluginContext.data = JP.value(context.data, pathString)
+              let pluginData = await plugin.data(pluginContext, context)
+              JP.value(context.data, pathString, pluginData)
+            })
+          } else {
+            pluginContext.data = context.data[scope]
+            let pluginData = await plugin.data(pluginContext, context)
+            context.data[scope] = pluginData
+          }
         }
       }))
     }))
