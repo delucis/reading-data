@@ -87,6 +87,37 @@ DESCRIBE('ReadingData#run()', function () {
     }
   })
 
+  IT('should call a plugin’s data method for every match when scope is a JSONPath', async function () {
+    let pluginScope = '$.foo..target'
+    let testValue = 500
+    let testMultiplier = 2
+    let preloadData = {
+      foo: {
+        target: testValue,
+        bar: {
+          thing: 'not targeted',
+          target: testValue
+        },
+        baz: [testValue, testMultiplier]
+      }
+    }
+    let pathTestPlugin = {
+      data: async function ({data}) {
+        return data * testMultiplier
+      },
+      config: {
+        scope: pluginScope,
+        hooks: 'process'
+      }
+    }
+    READING_DATA.preloadData(preloadData)
+    READING_DATA.use(pathTestPlugin)
+    await READING_DATA.run()
+    EXPECT(READING_DATA.data).to.have.property('foo')
+    EXPECT(READING_DATA.data.foo).to.have.property('target')
+    EXPECT(READING_DATA.data.foo.target).to.equal(testValue * testMultiplier)
+  })
+
   IT('should call a plugin’s data method via the process hook', async function () {
     let pluginScope = 'processTester'
     let testValue = 500
