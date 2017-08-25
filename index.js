@@ -76,6 +76,20 @@ const ReadingData = (function () {
   }
 
   /**
+   * Test whether a string starts with '$'.
+   *
+   * @memberof module:reading-data
+   * @private
+   * @param  {String} string The string to test.
+   * @return {Boolean}       `true` if `string` starts with `$`, otherwise `false`.
+   *
+   * @since 0.7.0
+   */
+  let isJSONPath = function (string) {
+    return /^\$/.test(string)
+  }
+
+  /**
    * Test whether or not a plugin should be called for a given hook and scope.
    *
    * @memberof module:reading-data
