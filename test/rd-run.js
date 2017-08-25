@@ -100,8 +100,8 @@ DESCRIBE('ReadingData#run()', function () {
       }
     }
     let processPlugin = {
-      data: function ({config}, {data}) {
-        return data[config.scope] * testMultiplier
+      data: function ({data}) {
+        return data * testMultiplier
       },
       config: {
         scope: pluginScope,
