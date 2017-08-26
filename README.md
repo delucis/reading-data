@@ -122,6 +122,35 @@ READING_DATA.use(myFetchPlugin, {
 })
 ```
 
+#### Using a JSONPath to specify scope
+
+Normally you set the scope of a plugin using a string. For example you might
+fetch information about books you’ve read to `'myBookshelf'` and a collection of
+recipes to `'myMenu'`.
+
+What if you had a plugin that converted strings to all caps, and you wanted to
+store all your book and recipe titles in all caps? You could specify this plugin’s
+scope using a [JSONPath expression][843f9c29], which should always start with a
+`$` character.
+
+  [843f9c29]: https://github.com/dchester/jsonpath#jsonpath-syntax "JSONPath Syntax documentation"
+
+```js
+READING_DATA.use(uppercaser, {
+  scope: ['$.myBookshelf..title', '$.myMenu..title']
+})
+```
+
+This would call the `uppercaser` plugin on every `title` property that is a
+child of `myBookshelf` and every `title` property that is a child of `myMenu`.
+You could even set `scope: '$..title'`, but that might be dangerous if another
+scope also had `title` children.
+
+**N.B.** Because JSONPath is effectively a search mechanism, it requires a data
+structure to already be in place. For this reason, JSONPath scopes are best
+suited to situations where you need to process already retrieved data.
+
+
 ### Preloading Data
 
 You may have existing data that should be expanded upon or used during the
