@@ -93,6 +93,35 @@ READING_DATA.use(myPlugin, {
 ```
 
 
+### Scoping your data
+
+When you call `.run()` on a `reading-data` instance, it adds data returned by
+any plugins in use to its `.data` property. You set the scope for a plugin
+in its options object.
+
+```js
+READING_DATA.use(myPlugin, {
+  scope: 'testData'
+})
+// returns data to READING_DATA.data.testData
+```
+
+This means you can have multiple plugins working during the same hook, but with
+separate scopes. If you need to work on the same scope with several plugins, for
+example in order to first fetch some data and then process it, this must be done
+in different hooks. Scopes are called in parallel, while hooks are called
+sequentially.
+
+```js
+READING_DATA.use(myFetchPlugin, {
+  scope: 'myData',
+  hooks: 'fetch'
+}).use(myProcessingPlugin, {
+  scope: 'myData',
+  hooks: 'process'
+})
+```
+
 ### Preloading Data
 
 You may have existing data that should be expanded upon or used during the
