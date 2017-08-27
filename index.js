@@ -151,7 +151,7 @@ const ReadingData = (function () {
               JP.value(context.data, pathString, pluginData)
             })
           } else {
-            pluginContext.data = context.data[scope]
+            pluginContext.data = context.data[scope] || {}
             let pluginData = await plugin.data(pluginContext, context)
             context.data[scope] = pluginData
           }
