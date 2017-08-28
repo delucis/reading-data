@@ -148,7 +148,11 @@ const ReadingData = (function () {
               let pathString = JP.stringify(path)
               pluginContext.data = JP.value(context.data, pathString)
               let pluginData = await plugin.data(pluginContext, context)
-              JP.value(context.data, pathString, pluginData)
+              if (pathString === '$') {
+                context.data = pluginData
+              } else {
+                JP.value(context.data, pathString, pluginData)
+              }
             })
           } else {
             pluginContext.data = context.data[scope] || {}
