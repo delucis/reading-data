@@ -103,7 +103,11 @@ DESCRIBE('ReadingData#run()', function () {
     }
     let pathTestPlugin = {
       data: async function ({data}) {
-        return data * testMultiplier
+        return new Promise(function (resolve, reject) {
+          setTimeout(function () {
+            resolve(data * testMultiplier)
+          }, 50)
+        })
       },
       config: {
         scope: pluginScope,
@@ -135,7 +139,11 @@ DESCRIBE('ReadingData#run()', function () {
     }
     let pathTestPlugin = {
       data: async function ({data}) {
-        return testData
+        return new Promise(function (resolve, reject) {
+          setTimeout(function () {
+            resolve(testData)
+          }, 50)
+        })
       },
       config: {
         scope: pluginScope
