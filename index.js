@@ -144,7 +144,7 @@ const ReadingData = (function () {
           }
           if (isJSONPath(scope)) {
             let paths = JP.paths(context.data, scope)
-            paths.map(async path => {
+            await Promise.all(paths.map(async path => {
               let pathString = JP.stringify(path)
               pluginContext.data = JP.value(context.data, pathString)
               let pluginData = await plugin.data(pluginContext, context)
@@ -153,7 +153,7 @@ const ReadingData = (function () {
               } else {
                 JP.value(context.data, pathString, pluginData)
               }
-            })
+            }))
           } else {
             pluginContext.data = context.data[scope] || {}
             let pluginData = await plugin.data(pluginContext, context)
