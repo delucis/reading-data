@@ -121,6 +121,31 @@ DESCRIBE('ReadingData#run()', function () {
     EXPECT(READING_DATA.data.foo.bar.target).to.equal(testValue * testMultiplier)
   })
 
+  IT('should call a plugin’s data method with the whole data object when scope is "$"', async function () {
+    let pluginScope = '$'
+    let testData = {
+      foo: {
+        target: 'testValue',
+        bar: {
+          thing: 'not targeted',
+          target: 'testValue'
+        },
+        baz: ['testValue', 'testMultiplier']
+      }
+    }
+    let pathTestPlugin = {
+      data: async function ({data}) {
+        return testData
+      },
+      config: {
+        scope: pluginScope
+      }
+    }
+    READING_DATA.use(pathTestPlugin)
+    await READING_DATA.run()
+    EXPECT(READING_DATA.data).to.equal(testData)
+  })
+
   IT('should call a plugin’s data method via the process hook', async function () {
     let pluginScope = 'processTester'
     let testValue = 500
