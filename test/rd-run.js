@@ -116,6 +116,9 @@ DESCRIBE('ReadingData#run()', function () {
     EXPECT(READING_DATA.data).to.have.property('foo')
     EXPECT(READING_DATA.data.foo).to.have.property('target')
     EXPECT(READING_DATA.data.foo.target).to.equal(testValue * testMultiplier)
+    EXPECT(READING_DATA.data.foo).to.have.property('bar')
+    EXPECT(READING_DATA.data.foo.bar).to.have.property('target')
+    EXPECT(READING_DATA.data.foo.bar.target).to.equal(testValue * testMultiplier)
   })
 
   IT('should call a plugin’s data method via the process hook', async function () {
