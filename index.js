@@ -223,6 +223,16 @@ const ReadingData = (function () {
       return plugins
     },
 
+    /**
+     * Get the metadata object for this instance of reading-data.
+     * @return {Object} Object containing metadata about reading-data, e.g. how long `.run()` took to complete.
+     *
+     * @since 0.8.0
+     */
+    meta: function () {
+      return meta
+    },
+
     // PUBLIC FUNCTIONS
     /**
      * Adds a hook to be called during ReadingData’s
