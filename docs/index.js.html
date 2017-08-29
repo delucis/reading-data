@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-reading-data.html">reading-data</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~addHook">addHook</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~clean">clean</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~config">config</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~hooks">hooks</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~plugins">plugins</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~preloadData">preloadData</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~run">run</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~uninstall">uninstall</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~use">use</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-reading-data.html">reading-data</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~addHook">addHook</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~clean">clean</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~config">config</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~hooks">hooks</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~meta">meta</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~plugins">plugins</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~preloadData">preloadData</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~run">run</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~uninstall">uninstall</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-reading-data.html#~use">use</a></span></li>
 </nav>
 
 <div id="main">
@@ -48,6 +48,8 @@
 const log = require('winston')
 const CLONE = require('lodash.clonedeep')
 const JP = require('jsonpath')
+const TIMESPAN = require('time-span')
+const MS = require('pretty-ms')
 
 const ReadingData = (function () {
   // PRIVATE VARIABLES
@@ -86,6 +88,17 @@ const ReadingData = (function () {
    * @type {Array}
    */
   let plugins = []
+
+  /**
+   * Object holding metadata about this reading-data instance
+   *
+   * @memberof module:reading-data
+   * @private
+   * @type {Object}
+   *
+   * @since 0.8.0
+   */
+  let meta = {}
 
   /**
    * Generate a unique ID to identify an installed plugin.
@@ -251,6 +264,16 @@ const ReadingData = (function () {
      */
     plugins: function () {
       return plugins
+    },
+
+    /**
+     * Get the metadata object for this instance of reading-data.
+     * @return {Object} Object containing metadata about reading-data, e.g. how long `.run()` took to complete.
+     *
+     * @since 0.8.0
+     */
+    meta: function () {
+      return meta
     },
 
     // PUBLIC FUNCTIONS
@@ -540,8 +563,12 @@ const ReadingData = (function () {
      * @since 0.0.1
      */
     run: async function () {
+      let timer = TIMESPAN()
+      meta.runtime = meta.runtimePretty = null
       preload(this)
       await callHooks(this)
+      meta.runtime = timer()
+      meta.runtimePretty = MS(meta.runtime)
       return this
     }
   }
@@ -560,7 +587,7 @@ module.exports = ReadingData
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a> on Mon Aug 28 2017 22:55:37 GMT+0200 (CEST) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a> on Tue Aug 29 2017 12:13:11 GMT+0200 (CEST) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
