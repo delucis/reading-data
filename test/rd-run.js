@@ -327,4 +327,24 @@ DESCRIBE('ReadingData#run()', function () {
       EXPECT(rd.data).to.have.property(testScope)
     })
   })
+
+  IT('should report execution time to ReadingData’s metadata object', async function () {
+    let testScope = 'metaTestPlugin'
+    let testPlugin = {
+      config: { scope: testScope },
+      data: function () {
+        return new Promise(function (resolve, reject) {
+          setTimeout(function () {
+            resolve('some async data')
+          }, 50)
+        })
+      }
+    }
+    READING_DATA.use(testPlugin)
+    await READING_DATA.run()
+    EXPECT(READING_DATA.meta()).to.be.an('object')
+    EXPECT(READING_DATA.meta()).to.have.property('runtime')
+    EXPECT(READING_DATA.meta().runtime).to.be.a('number')
+    EXPECT(READING_DATA.meta().runtimePretty).to.be.a('string')
+  })
 })
