@@ -345,6 +345,7 @@ DESCRIBE('ReadingData#run()', function () {
     EXPECT(READING_DATA.meta()).to.be.an('object')
     EXPECT(READING_DATA.meta()).to.have.property('runtime')
     EXPECT(READING_DATA.meta().runtime).to.be.a('number')
+    EXPECT(READING_DATA.meta().runtime).to.be.within(40, 60)
     EXPECT(READING_DATA.meta().runtimePretty).to.be.a('string')
   })
 })
