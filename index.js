@@ -47,6 +47,17 @@ const ReadingData = (function () {
   let plugins = []
 
   /**
+   * Object holding metadata about this reading-data instance
+   *
+   * @memberof module:reading-data
+   * @private
+   * @type {Object}
+   *
+   * @since 0.8.0
+   */
+  let meta = {}
+
+  /**
    * Generate a unique ID to identify an installed plugin.
    *
    * @memberof module:reading-data
