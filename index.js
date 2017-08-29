@@ -7,6 +7,8 @@
 const log = require('winston')
 const CLONE = require('lodash.clonedeep')
 const JP = require('jsonpath')
+const TIMESPAN = require('time-span')
+const MS = require('pretty-ms')
 
 const ReadingData = (function () {
   // PRIVATE VARIABLES
@@ -520,8 +522,12 @@ const ReadingData = (function () {
      * @since 0.0.1
      */
     run: async function () {
+      let timer = TIMESPAN()
+      meta.runtime = meta.runtimePretty = null
       preload(this)
       await callHooks(this)
+      meta.runtime = timer()
+      meta.runtimePretty = MS(meta.runtime)
       return this
     }
   }
