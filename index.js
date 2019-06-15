@@ -5,6 +5,7 @@
  */
 
 const log = require('winston')
+log.add(new log.transports.Console())
 const CLONE = require('lodash.clonedeep')
 const JP = require('jsonpath')
 const TIMESPAN = require('time-span')
