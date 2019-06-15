@@ -3,6 +3,7 @@
   "version": "0.8.2",
   "description": "Aggregate a user’s reading data from different sources.",
   "main": "index.js",
+  "files": [ "index.js" ],
   "scripts": {
     "build:docs": "jsdoc --configure .jsdoc.json --verbose",
     "clean:docs": "rimraf docs/",
