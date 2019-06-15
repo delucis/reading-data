@@ -23,19 +23,19 @@
   },
   "homepage": "https://github.com/delucis/reading-data#readme",
   "devDependencies": {
-    "chai": "^4.1.2",
-    "coveralls": "^3.0.2",
-    "jsdoc": "^3.5.5",
+    "chai": "^4.2.0",
+    "coveralls": "^3.0.4",
+    "jsdoc": "^3.6.2",
     "minami": "^1.2.3",
-    "mocha": "^5.2.0",
-    "nyc": "^12.0.2",
-    "rimraf": "^2.6.2"
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1",
+    "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "jsonpath": "^1.0.0",
+    "jsonpath": "^1.0.2",
     "lodash.clonedeep": "^4.5.0",
-    "pretty-ms": "^3.2.0",
-    "time-span": "^2.0.0",
-    "winston": "^3.0.0"
+    "pretty-ms": "^5.0.0",
+    "time-span": "^3.1.0",
+    "winston": "^3.2.1"
   }
 }
